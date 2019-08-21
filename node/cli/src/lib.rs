@@ -26,7 +26,9 @@ mod service;
 mod factory_impl;
 
 use tokio::prelude::Future;
-use tokio::runtime::{Builder as RuntimeBuilder, Runtime};
+use tokio02::runtime::{Builder as RuntimeBuilder, Runtime};
+use futures03::future::FutureExt;
+use futures03::compat::Future01CompatExt;
 pub use cli::{VersionInfo, IntoExit, NoCustom, SharedParams, ExecutionStrategyParam};
 use substrate_service::{AbstractService, Roles as ServiceRoles};
 use log::info;
@@ -239,7 +241,9 @@ where
 	let (exit_send, exit) = exit_future::signal();
 
 	let informant = cli::informant::build(&service);
-	runtime.executor().spawn(exit.until(informant).map(|_| ()));
+  let task = exit.until(informant);
+  let task01 = task.compat();
+	runtime.executor().spawn(task01.map(|_| ()));
 
 	// we eagerly drop the service so that the internal exit future is fired,
 	// but we need to keep holding a reference to the global telemetry guard
@@ -249,13 +253,14 @@ where
 		let exit = e.into_exit().map_err(|_| error::Error::Other("Exit future failed.".into()));
 		let service = service.map_err(|err| error::Error::Service(err));
 		let select = service.select(exit).map(|_| ()).map_err(|(err, _)| err);
-		runtime.block_on(select)
+    let select01 = select.compat();
+		runtime.block_on(select01)
 	};
 
 	exit_send.fire();
 
 	// TODO [andre]: timeout this future #1318
-	let _ = runtime.shutdown_on_idle().wait();
+	let _ = runtime.shutdown_on_idle();// .wait();
 
 	service_res
 }

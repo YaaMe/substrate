@@ -9,7 +9,9 @@ edition = "2018"
 [dependencies]
 log = "0.4"
 tokio = "0.1.7"
+tokio02 = { package = "tokio", version = "0.2.0-alpha.1"}
 futures = "0.1"
+futures03 = { package = "futures-preview", version = "=0.3.0-alpha.18" }
 exit-future = "0.1"
 jsonrpc-core = "13.2.0"
 cli = { package = "substrate-cli", path = "../../core/cli" }
@@ -48,6 +50,7 @@ support = { package = "srml-support", path = "../../srml/support", default-featu
 im_online = { package = "srml-im-online", path = "../../srml/im-online", default-features = false }
 sr-authority-discovery = { package = "srml-authority-discovery", path = "../../srml/authority-discovery", default-features = false }
 authority-discovery = { package = "substrate-authority-discovery", path = "../../core/authority-discovery"}
+lnpeer = { path = "../../srml/lnpeer" }
 
 [dev-dependencies]
 keystore = { package = "substrate-keystore", path = "../../core/keystore" }
