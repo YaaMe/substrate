@@ -50,7 +50,7 @@ support = { package = "srml-support", path = "../../srml/support", default-featu
 im_online = { package = "srml-im-online", path = "../../srml/im-online", default-features = false }
 sr-authority-discovery = { package = "srml-authority-discovery", path = "../../srml/authority-discovery", default-features = false }
 authority-discovery = { package = "substrate-authority-discovery", path = "../../core/authority-discovery"}
-lnpeer = { path = "../../srml/lnpeer" }
+# lnpeer = { path = "../../srml/lnpeer" }
 
 [dev-dependencies]
 keystore = { package = "substrate-keystore", path = "../../core/keystore" }
