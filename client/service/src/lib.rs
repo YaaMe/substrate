@@ -67,6 +67,8 @@ pub use network::{FinalityProofProvider, OnDemand, config::BoxFinalityProofReque
 #[doc(hidden)]
 pub use futures::future::Executor;
 
+pub use ln_bridge::{self, LnBridge};
+
 const DEFAULT_PROTOCOL_ID: &str = "sup";
 
 /// Substrate service.
@@ -102,6 +104,7 @@ pub struct Service<TBl, TCl, TSc, TNetStatus, TNet, TTxPool, TOc> {
 	_telemetry_on_connect_sinks: Arc<Mutex<Vec<mpsc::UnboundedSender<()>>>>,
 	_offchain_workers: Option<Arc<TOc>>,
 	keystore: keystore::KeyStorePtr,
+  ln_bridge: Arc<LnBridge>,
 	marker: PhantomData<TBl>,
 }
 
@@ -196,6 +199,7 @@ pub trait AbstractService: 'static + Future<Item = (), Error = Error> +
 	/// Get shared transaction pool instance.
 	fn transaction_pool(&self) -> Arc<Self::TransactionPool>;
 
+  fn ln_bridge(&self) -> Arc<LnBridge>;
 	/// Get a handle to a future that will resolve on exit.
 	fn on_exit(&self) -> ::exit_future::Exit;
 }
@@ -289,6 +293,10 @@ where
 	fn transaction_pool(&self) -> Arc<Self::TransactionPool> {
 		self.transaction_pool.clone()
 	}
+
+  fn ln_bridge(&self) -> Arc<LnBridge> {
+    self.ln_bridge.clone()
+  }
 
 	fn on_exit(&self) -> exit_future::Exit {
 		self.exit.clone()
