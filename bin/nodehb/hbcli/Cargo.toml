@@ -58,6 +58,7 @@ transaction-payment = { package = "pallet-transaction-payment", path = "../../..
 offchain = { package = "sc-offchain", path = "../../../client/offchain" }
 chain-spec = { package = "sc-chain-spec", path = "../../../client/chain-spec" }
 contracts = { package = "pallet-contracts", path = "../../../frame/contracts" }
+lightning = { package = "lightning", path = "../../../frame/lightning" }
 
 # node-specific dependencies
 hb-node-runtime = { path = "../runtime" }
