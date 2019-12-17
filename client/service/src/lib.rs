@@ -434,11 +434,11 @@ macro_rules! new_impl {
 		});
 
     // lightning bridge
-    // let ln_bridge = ln_bridge::LnBridge::new(exit.clone());
-    // let ln_bridge = Arc::new(ln_bridge);
-    // let ln_tasks = ln_bridge.bind_client(client.clone());
-    // ln_bridge.storage_ltn_key(backend.offchain_storage().unwrap());
-    // to_spawn_tx.unbounded_send(ln_tasks);
+    let ln_bridge = ln_bridge::LnBridge::new(exit.clone());
+    let ln_bridge = Arc::new(ln_bridge);
+    let ln_tasks = ln_bridge.bind_client(client.clone());
+    ln_bridge.storage_ltn_key(backend.offchain_storage().unwrap());
+    to_spawn_tx.unbounded_send(ln_tasks);
 
 		Ok(NewService {
 			client,
@@ -457,8 +457,8 @@ macro_rules! new_impl {
 			_telemetry: telemetry,
 			_offchain_workers: offchain_workers,
 			_telemetry_on_connect_sinks: telemetry_connection_sinks.clone(),
-			keystore, 
-                        // kln_bridge,
+			keystore,
+      ln_bridge,
 			marker: PhantomData::<$block>,
 		})
 	}}

@@ -101,7 +101,7 @@ pub struct LnBridge {
 
 impl LnBridge {
   pub fn new(exit: Exit) -> Self {
-    let settings = Settings::new(&String::from("./Settings.toml")).unwrap();
+    let settings = Settings::new(&String::from("./Settings_1.toml")).unwrap();
     let mut runtime = tokio::runtime::Runtime::new().unwrap();
     let executor = runtime.handle();
     let drone = Drone::new(executor.clone());
@@ -137,33 +137,32 @@ impl LnBridge {
     let ln_manager = self.ln_manager();
     let bridge = self.clone();
     // let ln = client.import_notification_stream()
-    //   .map(move |v| Ok::<_, ()>(v))
-    //   .compat()
-    //   .for_each(move |notification| {
-    //     let res = {
-    //       let header = notification.header;
-    //       let id = OpaqueDigestItemId::Consensus(&LN_ENGINE_ID);
-    //       let filter_log = |log: ConsensusLog| match log {
-    //         // ConsensusLog::FundChannel() => Some(1),
-    //         // ConsensusLog::CloseChannel() => Some(1),
-    //         // ConsensusLog::ForceCloseAllChannel() => Some(1),
-    //         // ConsensusLog::PayInvoice() => Some(1),
-    //         // ConsensusLog::CreateInvoice() => Some(1),
-    //         ConsensusLog::ConnectPeer(node) => {
-    //           let hex_str = hex::encode(node);
-    //           let bytes = hex::decode(hex_str).unwrap();
-    //           let addr = String::from_utf8(bytes).unwrap();
-    //           println!("<<<<<<<<<<<<<<<<<<<<<<<<<< addr {:?}", addr);
-    //           Some(ln_manager.connect(addr))
-    //         },
-    //         _ => None,
-    //       };
-    //       header.digest().convert_first(|l| l.try_to(id).and_then(filter_log))
-    //     };
-    //     if let Some(change) = res {
-    //       println!("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< catch log event here");
-    //     }
-    //     Ok(())
+      // .map::<_, fn(_) -> _>(move |v| Ok::<_, ()>(v)).compat();
+      // .for_each(move |notification| {
+      //   let res = {
+      //     let header = notification.header;
+      //     let id = OpaqueDigestItemId::Consensus(&LN_ENGINE_ID);
+      //     let filter_log = |log: ConsensusLog| match log {
+      //       // ConsensusLog::FundChannel() => Some(1),
+      //       // ConsensusLog::CloseChannel() => Some(1),
+      //       // ConsensusLog::ForceCloseAllChannel() => Some(1),
+      //       // ConsensusLog::PayInvoice() => Some(1),
+      //       // ConsensusLog::CreateInvoice() => Some(1),
+      //       ConsensusLog::ConnectPeer(node) => {
+      //         let hex_str = hex::encode(node);
+      //         let bytes = hex::decode(hex_str).unwrap();
+      //         let addr = String::from_utf8(bytes).unwrap();
+      //         println!("<<<<<<<<<<<<<<<<<<<<<<<<<< addr {:?}", addr);
+      //         Some(ln_manager.connect(addr))
+      //       },
+      //       _ => None,
+      //     };
+      //     header.digest().convert_first(|l| l.try_to(id).and_then(filter_log))
+      //   };
+      //   if let Some(change) = res {
+      //     println!("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< catch log event here");
+      //   }
+      //   Ok(())
       //   }).select(self.exit.clone()).then(|_| Ok(()));
       // Box::new(ln)
       Box::new(self.exit.clone())
