@@ -437,6 +437,7 @@ macro_rules! new_impl {
     let ln_bridge = ln_bridge::LnBridge::new(exit.clone());
     let ln_bridge = Arc::new(ln_bridge);
     let ln_tasks = ln_bridge.bind_client(client.clone());
+    client.import_notification_stream().map(|v| Ok::<_, ()>(v)).compat();
     ln_bridge.storage_ltn_key(backend.offchain_storage().unwrap());
     to_spawn_tx.unbounded_send(ln_tasks);
 

@@ -15,7 +15,7 @@ use futures::channel::mpsc;
 use exit_future::Exit;
 use futures01::future::Future as Future01;
 use futures01::Stream;
-use futures::{future, StreamExt, TryStreamExt};
+use futures_util::{StreamExt, TryStreamExt};
 
 use ln_manager::ln_bridge::settings::Settings;
 use ln_manager::executor::Larva;
@@ -136,36 +136,36 @@ impl LnBridge {
     let cli = client.clone();
     let ln_manager = self.ln_manager();
     let bridge = self.clone();
-    // let ln = client.import_notification_stream()
-      // .map::<_, fn(_) -> _>(move |v| Ok::<_, ()>(v)).compat();
-      // .for_each(move |notification| {
-      //   let res = {
-      //     let header = notification.header;
-      //     let id = OpaqueDigestItemId::Consensus(&LN_ENGINE_ID);
-      //     let filter_log = |log: ConsensusLog| match log {
-      //       // ConsensusLog::FundChannel() => Some(1),
-      //       // ConsensusLog::CloseChannel() => Some(1),
-      //       // ConsensusLog::ForceCloseAllChannel() => Some(1),
-      //       // ConsensusLog::PayInvoice() => Some(1),
-      //       // ConsensusLog::CreateInvoice() => Some(1),
-      //       ConsensusLog::ConnectPeer(node) => {
-      //         let hex_str = hex::encode(node);
-      //         let bytes = hex::decode(hex_str).unwrap();
-      //         let addr = String::from_utf8(bytes).unwrap();
-      //         println!("<<<<<<<<<<<<<<<<<<<<<<<<<< addr {:?}", addr);
-      //         Some(ln_manager.connect(addr))
-      //       },
-      //       _ => None,
-      //     };
-      //     header.digest().convert_first(|l| l.try_to(id).and_then(filter_log))
-      //   };
-      //   if let Some(change) = res {
-      //     println!("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< catch log event here");
-      //   }
-      //   Ok(())
-      //   }).select(self.exit.clone()).then(|_| Ok(()));
-      // Box::new(ln)
-      Box::new(self.exit.clone())
+    let ln = client.import_notification_stream()
+      .map(|v| Ok::<_, ()>(v)).compat()
+      .for_each(move |notification| {
+        let res = {
+          let header = notification.header;
+          let id = OpaqueDigestItemId::Consensus(&LN_ENGINE_ID);
+          let filter_log = |log: ConsensusLog| match log {
+            // ConsensusLog::FundChannel() => Some(1),
+            // ConsensusLog::CloseChannel() => Some(1),
+            // ConsensusLog::ForceCloseAllChannel() => Some(1),
+            // ConsensusLog::PayInvoice() => Some(1),
+            // ConsensusLog::CreateInvoice() => Some(1),
+            ConsensusLog::ConnectPeer(node) => {
+              let hex_str = hex::encode(node);
+              let bytes = hex::decode(hex_str).unwrap();
+              let addr = String::from_utf8(bytes).unwrap();
+              println!("<<<<<<<<<<<<<<<<<<<<<<<<<< addr {:?}", addr);
+              Some(ln_manager.connect(addr))
+            },
+            _ => None,
+          };
+          header.digest().convert_first(|l| l.try_to(id).and_then(filter_log))
+        };
+        if let Some(change) = res {
+          println!("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< catch log event here");
+        }
+        Ok(())
+        }).select(self.exit.clone()).then(|_| Ok(()));
+      Box::new(ln)
+      // Box::new(self.exit.clone())
   }
 
   pub fn bind_runtime<C, Block>(&self, client: Arc<C>) where

@@ -12,7 +12,8 @@ client = { package = "sc-client", path = "../" }
 ln-manager = { git = "https://github.com/YaaMe/rust-lightning-bitcoinrpc.git", branch = "knarfytrebil" }
 # runtime_io = { package = "sr-io", path = "../sr-io" }
 futures01 = "0.1.17"
-futures = { package = "futures-preview", version = "0.3.0-alpha.19" }
+futures = { package = "futures-preview", version = "0.3.0-alpha.19", features = ["compat"] }
+futures-util = { version = "0.3.1" }
 tokio = { version = "0.2.0-alpha.6" }
 exit-future = "0.1"
 log = { version = "0.4", optional = true }
